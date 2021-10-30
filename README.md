@@ -75,6 +75,8 @@ results of an overall accuracy score 0.939.
 The encoded (serialized) file size \> 100mb, cannot git to github. 
 To reproduce this model. Need to run the training locally. 
 It depends on the machine’s speed. It took my laptop almost an hour to train this. 
+My version can be downloaded here: https://www.dropbox.com/s/o2iap7gud8yjywd/released_model.pkl?dl=0
+
 
 
 ### Visualization
