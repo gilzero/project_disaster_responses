@@ -131,7 +131,7 @@ def model():
 
     # Run the model to predict/classify:
     ## load from model pickle file
-    model = pickle.load(open('static/machine_training_models/released_model.pkl', 'rb'))
+    model = pickle.load(open('static/machine_learning_models/released_model.pkl', 'rb'))
 
     ## convert message string to numpy array shape
     classification_input = np.array([message])
