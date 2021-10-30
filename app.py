@@ -24,7 +24,7 @@ app.config['SECRET_KEY'] = SECRET_KEY
 
 # Application Reusable Objects
 ## Load DataFrame
-engine = create_engine('sqlite:///DisasterRes.db')
+engine = create_engine('sqlite:///static/db/DisasterRes.db')
 df = pd.read_sql_table('DisasterResponse', engine)
 print(f"df.shape: {df.shape}")
 
