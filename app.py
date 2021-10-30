@@ -4,8 +4,6 @@ from flask import Flask, request
 from flask import render_template
 import json
 from plotly.utils import PlotlyJSONEncoder
-from pprint import pp
-import plotly.express as px
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 import os
@@ -54,9 +52,62 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/plotly', methods=["GET", "POST"])
+@app.route('/plotly')
 def plotly():
-    return render_template('plotly.html')
+    # Three Plots Genre bar chart, category bar chart, word count per category chart
+
+    # ===== Gener Chart Handling ===== #
+    genre_x = [x.title() for x in df['genre'].value_counts().index.tolist()]
+    genre_y = df['genre'].value_counts().values.tolist()
+
+    genre_data = [{
+        'type': 'bar',
+        'x': genre_x,
+        'y': genre_y
+    }]
+
+    genre_layout = {
+        'title': '',
+        'xaxis': {'title': 'Genre'},
+        'yaxis': {'title': 'Numbers'},
+        'autosize': True
+
+    }
+
+    # assemble the figure object
+    genre_fig = {'data': genre_data, 'layout': genre_layout}
+
+    # jsonfy the figure object for html/js parsing
+    genre_fig_json = json.dumps(genre_fig, cls=PlotlyJSONEncoder)
+
+    # ===== Category Chart Handling ===== #
+    count_cats = df.iloc[:, -36:].sum().sort_values(ascending=False)
+    count_cats_k = [x.replace('_', ' ').title() for x in count_cats.index.to_list()]
+    count_cats_v = list(count_cats.values)
+
+    cat_data = [{
+        'type': 'bar',
+        'x': count_cats_k,
+        'y': count_cats_v
+    }]
+
+    cat_layout = {
+        'title': '',
+        'xaxis': {'title': 'Categories'},
+        'yaxis': {'title': 'Numbers'},
+        'autosize': True
+    }
+
+    # assemble the figure object
+    cat_fig = {'data': cat_data, 'layout': cat_layout}
+
+    # jsonfy the figure object for html/js parsing
+    cat_fig_json = json.dumps(cat_fig, cls=PlotlyJSONEncoder)
+
+
+    # ===== Term Frequency Chart Handling ===== #
+
+    return render_template('plotly.html', genre_fig_json=genre_fig_json, cat_fig_json=cat_fig_json)
 
 
 @app.route('/model', methods=["GET", "POST"])
@@ -101,7 +152,17 @@ def model():
     return render_template('model.html', form=form, template='form-template', message=message, cats=cats)
 
 
+
+
+@app.route('/tf', methods=["GET", "POST"])
+def tf():
+    print('tf page')
+
+
+    return render_template('td.html', form=form, template='form-template')
+
+
 if __name__ == '__main__':
-    # use terminal python app.py to run. (do not use 'flask run' in this case, otherwise pickle wont load.)
-    # app.run() vs flask run.  https://www.twilio.com/blog/how-run-flask-application
+    # use terminal python app.py to run. (do not use 'flask run' in this case, otherwise pickle wont load properly.)
+    # details about 'app.run() vs flask run'.  https://www.twilio.com/blog/how-run-flask-application
     app.run()
