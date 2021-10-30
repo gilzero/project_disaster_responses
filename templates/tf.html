@@ -8,7 +8,7 @@
     <div class="container-fluid py-4">
         <div class="row">
             <div class="col-md-6">
-                <h5 class="mb-0">Plotly</h5>
+                <h5 class="mb-0">Term Frequency NLTK</h5>
                 <p class="text-sm mb-0">
                     Term Frequency / Word Count per Category Analysis
                 </p>
@@ -24,7 +24,26 @@
                     </div>
                     <div class="card-body p-3">
 
-                        <div id="demo3"></div>
+                        <div class="form-wrapper">
+
+                            {% if category != 'all' %}
+                                    <p class="lead">
+                                        Term Frequency / Word Count for {{ category.replace('_', ' ').title() }}
+                                    </p>
+                            {% endif %}
+
+                            <form method="POST" action="{{ url_for('tf') }}">
+
+
+                                <fieldset class="form-field">
+                                    {{ form.category.label(class="form-label") }}
+                                    {{ form.category(class="form-control") }}
+                                </fieldset>
+
+                                {{ form.submit(class="btn btn-primary mb-3 mt-3") }}
+                            </form>
+                        </div>
+
                         <div id="tf-plot"></div>
 
                     </div>
@@ -41,29 +60,22 @@
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
 
-{#    <script>#}
-{#        document.getElementById("demo1").innerHTML = "Hello JavaScript!";#}
-{##}
-{#        // plot genre#}
-{#        const genreJSON = {{ genre_fig_json | safe }};#}
-{#        Plotly.newPlot("genre-plot", genreJSON)#}
-{##}
-{#        // plot category#}
-{#        const catJSON = {{ cat_fig_json | safe }};#}
-{#        Plotly.newPlot("category-plot", catJSON)#}
-{##}
-{##}
-{#        // plot term frequency / word counts per category#}
-{##}
-{##}
-{#        // responsive layout#}
-{#        window.onresize = function () {#}
-{#            Plotly.relayout('genre-plot', {#}
-{#                'xaxis.autorange': true,#}
-{#                'yaxis.autorange': true#}
-{#            });#}
-{#        };#}
-{##}
-{#    </script>#}
+    <script>
+        {#document.getElementById("demo1").innerHTML = "Hello JavaScript!";#}
+
+        // plot tf
+        const tfJSON = {{ tf_fig_json | safe }};
+        Plotly.newPlot("tf-plot", tfJSON)
+
+
+        // responsive layout
+        window.onresize = function () {
+            Plotly.relayout('tf-plot', {
+                'xaxis.autorange': true,
+                'yaxis.autorange': true
+            });
+        };
+
+    </script>
 
 {% endblock %}

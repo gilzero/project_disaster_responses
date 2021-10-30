@@ -72,6 +72,14 @@
                                 <span class="sidenav-normal"> Plotly </span>
                             </a>
                         </li>
+
+                        <li class="nav-item {% if url_for(request.endpoint) == '/tf' %} active  {% endif %}">
+                            <a class="nav-link {% if url_for(request.endpoint) == '/tf' %} active  {% endif %}" href="/tf">
+                                <span class="sidenav-mini-icon"> T </span>
+                                <span class="sidenav-normal"> Term Frequency </span>
+                            </a>
+                        </li>
+
                         <li class="nav-item {% if url_for(request.endpoint) == '/model' %} active  {% endif %}">
                             <a class="nav-link {% if url_for(request.endpoint) == '/model' %} active  {% endif %}" href="/model">
                                 <span class="sidenav-mini-icon"> M </span>

@@ -5,10 +5,11 @@ from flask import render_template
 import json
 from plotly.utils import PlotlyJSONEncoder
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
+from wtforms import StringField, SubmitField, SelectField
 import os
 import pickle
 import numpy as np
+from sklearn.feature_extraction.text import CountVectorizer
 
 from train_classifier import tokenize
 from train_classifier import StartingVerbExtractor
@@ -30,6 +31,8 @@ print(f"df.shape: {df.shape}")
 cat_names = list(df.iloc[:, -36:].columns)
 cat_names = [x.replace("_", ' ').title() for x in cat_names]
 print(f"📈 cat_names:\n {cat_names}")
+options = [('all', 'All (Default)')] + list(
+    zip(list(df.iloc[:, -36:].columns), [x.replace("_", ' ').title() for x in cat_names]))
 
 
 # Define Forms
@@ -38,8 +41,12 @@ class MessageForm(FlaskForm):
     submit = SubmitField('Submit')
 
 
-class PlotlyForm(FlaskForm):
+class TfForm(FlaskForm):
     message = StringField('Message')
+    category = SelectField(
+        'Select a Category to See Results:',
+        choices=options
+    )
     submit = SubmitField('Submit')
 
 
@@ -104,9 +111,6 @@ def plotly():
     # jsonfy the figure object for html/js parsing
     cat_fig_json = json.dumps(cat_fig, cls=PlotlyJSONEncoder)
 
-
-    # ===== Term Frequency Chart Handling ===== #
-
     return render_template('plotly.html', genre_fig_json=genre_fig_json, cat_fig_json=cat_fig_json)
 
 
@@ -152,14 +156,95 @@ def model():
     return render_template('model.html', form=form, template='form-template', message=message, cats=cats)
 
 
-
-
 @app.route('/tf', methods=["GET", "POST"])
 def tf():
-    print('tf page')
+    print('Viewing /tf page')
+
+    if request.form.get('category'):
+        category = request.form.get('category')
+    else:
+        category = 'all'
+
+    print(f"[category]: {category}")
+    print(f"length of category: {len(category)}")
+
+    # allow user to input a category
+    form = TfForm()
+
+    # compute word count
+    wc_dict = _get_category_top_words(df, category)
+    print(wc_dict)
+
+    # ===== TF Chart Handling ===== #
+    tf_words = list(wc_dict.keys())
+    tf_counts = list(wc_dict.values())
+
+    tf_data = [{
+        'type': 'bar',
+        'x': tf_words,
+        'y': tf_counts
+    }]
+
+    tf_layout = {
+        'title': '',
+        'xaxis': {'title': 'Terms'},
+        'yaxis': {'title': 'Counts'},
+        'autosize': True
+    }
+
+    # assemble the figure object
+    tf_fig = {'data': tf_data, 'layout': tf_layout}
+
+    # jsonfy the figure object for html/js parsing
+    tf_fig_json = json.dumps(tf_data, cls=PlotlyJSONEncoder)
+
+    return render_template('tf.html', tf_fig_json=tf_fig_json, form=form, template='form-template', category=category)
 
 
-    return render_template('td.html', form=form, template='form-template')
+# Private functions
+def _get_category_top_words(df, category='all', size=30):
+    # df: original df
+    # category: column name: e.g 'weather_related', 'food'
+    # size: top how many? e.g 20 = top 20 (most common 20 words)
+    #
+    # return a top word count dictionary
+
+    print(f'Analyzing Most Common Terms Found in "{category}" ...')
+
+    # double check category name valid. if not in column name,
+    # make it to all
+    names = df.iloc[:, -36:].columns.to_list()
+
+    if category not in names:
+        print(f'Category {category} Not Found. Using All Messages.')
+        category = 'all'
+        messages = df['message']
+    else:
+        # subset the category message
+        messages = df[df[category] == 1]['message']
+
+    # assemble a corpus
+    corpus = list(messages.values)
+
+    # initialize count vectorized object
+    cv = CountVectorizer(tokenizer=tokenize)
+
+    # fit the transformer to get each token (word)
+    cv_fit = cv.fit_transform(corpus)
+
+    # all words (feature names)
+    word_list = cv.get_feature_names_out()
+
+    # count of each word (feature names) in array shape
+    count_list = np.asarray(cv_fit.sum(axis=0))[0]
+
+    # (word count dictionary) Concat feature names and count value together.
+    wc_dict = dict(zip(word_list, count_list))
+
+    # assemble to a DataFrame for computation.
+    wc_df = pd.DataFrame.from_dict(wc_dict, orient='index', columns=['number'])
+
+    return wc_df.sort_values(by=['number'], ascending=[False]).head(size)['number'].to_dict()
 
 
 if __name__ == '__main__':
