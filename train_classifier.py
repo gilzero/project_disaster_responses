@@ -117,7 +117,7 @@ def export_model(model):
     # Export model as a pickle file
 
     print("📦 Exporting Model...")
-    pickle.dump(model, open('released_model.pkl', 'wb'))
+    pickle.dump(model, open('static/machine_training_models/released_model.pkl', 'wb'))
     print("📦 Model Exported/Released. 'released_model.pkl' ✅")
 
 

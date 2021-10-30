@@ -18,10 +18,9 @@ from train_classifier import StartingVerbExtractor
 app = Flask(__name__)
 
 # Application Settings
-# A secret key is required to use CSRF. form submittion.
+# A secret key is required to use CSRF. form submission.
 SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
-
 
 # Application Reusable Objects
 ## Load DataFrame
@@ -35,19 +34,15 @@ cat_names = [x.replace("_", ' ').title() for x in cat_names]
 print(f"📈 cat_names:\n {cat_names}")
 
 
-
-
 # Define Forms
 class MessageForm(FlaskForm):
     message = StringField('Message')
     submit = SubmitField('Submit')
 
+
 class PlotlyForm(FlaskForm):
     message = StringField('Message')
     submit = SubmitField('Submit')
-
-
-
 
 
 # Application Router handling
@@ -68,7 +63,6 @@ def plotly():
 def model():
     print(f"df.shape: {df.shape}")
 
-
     if request.form.get('message'):
         message = request.form.get('message')
     else:
@@ -82,7 +76,7 @@ def model():
 
     # Run the model to predict/classify:
     ## load from model pickle file
-    model = pickle.load(open('released_model.pkl', 'rb'))
+    model = pickle.load(open('static/machine_training_models/released_model.pkl', 'rb'))
 
     ## convert message string to numpy array shape
     classification_input = np.array([message])
@@ -90,7 +84,6 @@ def model():
     ## classify / predict
     classification_result = model.predict(classification_input)
     print(f"[classification_result]: {classification_result}")
-
 
     # parse categories
     # if user does not enter any message text. make a dummy list
@@ -105,9 +98,7 @@ def model():
 
     cats = dict(zip(cat_names, result))
 
-
     return render_template('model.html', form=form, template='form-template', message=message, cats=cats)
-
 
 
 if __name__ == '__main__':

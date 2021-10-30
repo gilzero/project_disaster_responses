@@ -14,6 +14,7 @@ import pandas as pd
 import numpy as np
 from sqlalchemy import create_engine
 
+
 def load_data(messages_filepath, categories_filepath):
     # load messages dataset
     messages = pd.read_csv(messages_filepath)
@@ -28,8 +29,6 @@ def load_data(messages_filepath, categories_filepath):
     # df.head()
 
     return df
-
-
 
 
 def clean_data(df):

@@ -10,7 +10,7 @@ from train_classifier import tokenize
 from train_classifier import StartingVerbExtractor
 
 # load from model pickle file
-model = pickle.load(open('released_model.pkl', 'rb'))
+model = pickle.load(open('static/machine_training_models/released_model.pkl', 'rb'))
 
 # make test independent variable for classification/prediction
 message = 'i need to eat something. do you have burger? hungry'
