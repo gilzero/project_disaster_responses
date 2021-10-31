@@ -111,10 +111,12 @@ For the TF Analysis page, an interactive form is added. Users can select any cat
 
 ## About /tf page (Term Frequency Analysis)
 
+
 The pages use CounterVectorizer to compute word count. 
 To be more specific about term frequency context, we might consider using TfidfTransformer or TfidfVectorizer to get TFIDF values and put them together with word counts. 
 However, for visualization illustration purposes, I would use CounterVectorizer. 
 For a more ‘pro’ version, consider plotting {word, count of the word, TFIDF of the word} as a dataset. Then, make the TFIDF value to show when the user hovers over the word. 
+
 ---
 
 ## Application Screenshot
