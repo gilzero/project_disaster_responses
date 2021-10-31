@@ -121,7 +121,6 @@ def export_model(model):
     print("📦 Model Exported/Released. 'released_model.pkl' ✅")
 
 
-
 def run_pipeline(data_file):
     X, y, cat_columns = load_data(data_file)  # run ETL pipeline
     model = build_model()  # build model pipeline
@@ -179,7 +178,6 @@ class StartingVerbExtractor(BaseEstimator, TransformerMixin):
 if __name__ == '__main__':
     data_file = sys.argv[1]  # get filename of dataset
     run_pipeline(data_file)  # run data pipeline
-
 
 # ========= Model hyper parameters tuning experiments ===========
 

@@ -81,42 +81,39 @@
                                     {% for i in range(0, top_cats_stats_len) %}
 
                                         <tr>
-                                        <td class="w-30">
-                                            <div class="d-flex px-2 py-1 align-items-center">
-                                                <div>
-                                                    <i class="ni ni-tag"></i>
+                                            <td class="w-30">
+                                                <div class="d-flex px-2 py-1 align-items-center">
+                                                    <div>
+                                                        <i class="ni ni-tag"></i>
+                                                    </div>
+                                                    <div class="ms-4">
+                                                        <p class="text-xs font-weight-bold mb-0">Category:</p>
+                                                        <h6 class="text-sm mb-0">{{ top_cats_stats[i][1] }}</h6>
+                                                    </div>
                                                 </div>
-                                                <div class="ms-4">
-                                                    <p class="text-xs font-weight-bold mb-0">Category:</p>
-                                                    <h6 class="text-sm mb-0">{{ top_cats_stats[i][1] }}</h6>
+                                            </td>
+                                            <td>
+                                                <div class="text-center">
+                                                    <p class="text-xs font-weight-bold mb-0">Percent:</p>
+                                                    <h6 class="text-sm mb-0">{{ top_cats_stats[i][2] }}</h6>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0">Percent:</p>
-                                                <h6 class="text-sm mb-0">{{ top_cats_stats[i][2] }}</h6>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0">Length Mean:</p>
-                                                <h6 class="text-sm mb-0">{{ top_cats_stats[i][3] }}</h6>
-                                            </div>
-                                        </td>
+                                            </td>
+                                            <td>
+                                                <div class="text-center">
+                                                    <p class="text-xs font-weight-bold mb-0">Length Mean:</p>
+                                                    <h6 class="text-sm mb-0">{{ top_cats_stats[i][3] }}</h6>
+                                                </div>
+                                            </td>
 
-                                        <td class="align-middle text-sm">
-                                            <div class="col text-center">
-                                                <p class="text-xs font-weight-bold mb-0">Details:</p>
-                                                <h6 class="text-sm mb-0"><a href="/datatable/{{ top_cats_stats[i][0] }}">More</a></h6>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                            <td class="align-middle text-sm">
+                                                <div class="col text-center">
+                                                    <p class="text-xs font-weight-bold mb-0">Details:</p>
+                                                    <h6 class="text-sm mb-0"><a href="#">More</a></h6>
+                                                </div>
+                                            </td>
+                                        </tr>
 
                                     {% endfor %}
-
-
-
 
 
                                     </tbody>
@@ -172,11 +169,7 @@
 
                             {% endfor %}
 
-                            <tr>
-                                <td class="text-sm font-weight-normal">Please, I need more information on my
-                                    portable device.
-                                </td>
-                            </tr>
+
 
 
                             </tbody>

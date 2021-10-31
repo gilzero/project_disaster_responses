@@ -22,15 +22,17 @@ SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
 
 # Application Reusable Objects
-## Load DataFrame
+# Load DB
 engine = create_engine('sqlite:///static/db/DisasterRes.db')
 df = pd.read_sql_table('DisasterResponse', engine)
 print(f"df.shape: {df.shape}")
 
-# Category Names
+# Get Category Names
 cat_names = list(df.iloc[:, -36:].columns)
 cat_names = [x.replace("_", ' ').title() for x in cat_names]
 print(f"📈 cat_names:\n {cat_names}")
+
+# options object for drop down selection in UI
 options = [('all', 'All (Default)')] + list(
     zip(list(df.iloc[:, -36:].columns), [x.replace("_", ' ').title() for x in cat_names]))
 
@@ -49,14 +51,12 @@ class CategoryForm(FlaskForm):
     submit = SubmitField('Submit')
 
 
-# Application Router handling
-
+# Application Router
 
 @app.route('/')
 @app.route('/index')
 def index():
-
-    # general stats (top 10 categories info)
+    # General stats (top 10 categories info)
     names = list(df.iloc[:, -36:].sum().sort_values(ascending=False).head(10).index)
     top_cats_stats = []
     for n in names:
@@ -65,14 +65,13 @@ def index():
         mean_length = round(df[df[n] == 1]['message'].apply(lambda x: len(x)).describe()['mean'], 2)
         top_cats_stats.append((n, title, percent, mean_length))
 
-
     # Get 100 random sample messages from Dataset
     sample_msgs = list(df['message'].sample(n=100).values)
 
-    # total record value
+    # Total record value
     total = df.shape[0]
 
-    # average text length
+    # Average text length
     mean_length = round(df['message'].apply(lambda x: len(x)).describe()['mean'], 2)
 
     return render_template('index.html',
@@ -83,9 +82,9 @@ def index():
 
 @app.route('/plotly')
 def plotly():
-    # Three Plots Genre bar chart, category bar chart, word count per category chart
+    # Two Plots Genre bar chart, category bar chart
 
-    # ===== Gener Chart Handling ===== #
+    # ===== Genre Chart Handling ===== #
     genre_x = [x.title() for x in df['genre'].value_counts().index.tolist()]
     genre_y = df['genre'].value_counts().values.tolist()
 
@@ -103,10 +102,10 @@ def plotly():
 
     }
 
-    # assemble the figure object
+    # Assemble the figure object
     genre_fig = {'data': genre_data, 'layout': genre_layout}
 
-    # jsonfy the figure object for html/js parsing
+    # jsonify the figure object for html/js parsing
     genre_fig_json = json.dumps(genre_fig, cls=PlotlyJSONEncoder)
 
     # ===== Category Chart Handling ===== #
@@ -127,10 +126,10 @@ def plotly():
         'autosize': True
     }
 
-    # assemble the figure object
+    # Assemble the figure object
     cat_fig = {'data': cat_data, 'layout': cat_layout}
 
-    # jsonfy the figure object for html/js parsing
+    # jsonify the figure object for html/js parsing
     cat_fig_json = json.dumps(cat_fig, cls=PlotlyJSONEncoder)
 
     return render_template('plotly.html', genre_fig_json=genre_fig_json, cat_fig_json=cat_fig_json)
@@ -138,40 +137,38 @@ def plotly():
 
 @app.route('/model', methods=["GET", "POST"])
 def model():
-    print(f"df.shape: {df.shape}")
+    print(f"[df.shape]: {df.shape}")
 
+    # Get the message parameter value from POST. If message parameter is not POSTed, make it an empty string.
     if request.form.get('message'):
         message = request.form.get('message')
     else:
         message = ''
 
     print(f"[message]: {message}")
-    print(f"length of message: {len(message)}")
 
-    # allow user to input a message for classification labeling
+    # Allow user to input a message for classification labeling
     form = MessageForm()
 
     # Run the model to predict/classify:
-    ## load from model pickle file
+    # load from model pickle file
     model = pickle.load(open('static/machine_learning_models/released_model.pkl', 'rb'))
 
-    ## convert message string to numpy array shape
+    # convert message string to numpy array shape
     classification_input = np.array([message])
 
-    ## classify / predict
+    # classify / predict
     classification_result = model.predict(classification_input)
     print(f"[classification_result]: {classification_result}")
 
-    # parse categories
+    # Parse categories
     # if user does not enter any message text. make a dummy list
     # otherwise, assign to result variable
 
     if len(message) < 1:
         result = [0 for i in range(36)]
-        # print(type(result))
     else:
         result = list(classification_result[0])
-        # print(type(result))
 
     cats = dict(zip(cat_names, result))
 
@@ -182,18 +179,18 @@ def model():
 def tf():
     print('Viewing /tf page')
 
+    # Get the category parameter value from POST. If category parameter is not POSTed, make it to default all.
     if request.form.get('category'):
         category = request.form.get('category')
     else:
         category = 'all'
 
     print(f"[category]: {category}")
-    print(f"length of category: {len(category)}")
 
-    # allow user to input a category
+    # Allow user to input a category
     form = CategoryForm()
 
-    # compute word count
+    # Compute word count
     wc_dict = _get_category_top_words(df, category)
     print(wc_dict)
 
@@ -214,13 +211,14 @@ def tf():
         'autosize': True
     }
 
-    # assemble the figure object
+    # Assemble the figure object
     tf_fig = {'data': tf_data, 'layout': tf_layout}
 
-    # jsonfy the figure object for html/js parsing
+    # jsonify the figure object for html/js parsing
     tf_fig_json = json.dumps(tf_data, cls=PlotlyJSONEncoder)
 
     return render_template('tf.html', tf_fig_json=tf_fig_json, form=form, template='form-template', category=category)
+
 
 @app.route('/about')
 def about():
@@ -237,7 +235,7 @@ def _get_category_top_words(df, category='all', size=30):
 
     print(f'Analyzing Most Common Terms Found in "{category}" ...')
 
-    # double check category name valid. if not in column name,
+    # Double check category name valid. if not in column name,
     # make it to all
     names = df.iloc[:, -36:].columns.to_list()
 
@@ -249,7 +247,7 @@ def _get_category_top_words(df, category='all', size=30):
         # subset the category message
         messages = df[df[category] == 1]['message']
 
-    # assemble a corpus
+    # Assemble a corpus
     corpus = list(messages.values)
 
     # initialize a CountVectorizer object

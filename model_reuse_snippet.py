@@ -2,7 +2,6 @@
 Example of minial script to reuse the released model and do classification of a message instance.
 """
 
-
 # import neccessary packages
 import pickle
 import numpy as np
@@ -18,14 +17,12 @@ message = 'I need to eat something. Do you have burger? So Hungry.'
 # match the np array shape
 test_1 = np.array([message])
 
-
 # classify / predict
 result = model.predict(test_1)
 
 print(result)
 
-
-# To test multiple message, just make numpy array of mutiple messages
+# To test multiple message, make numpy array of multiple messages
 # msg1 = 'hello world'
 # msg2 = 'hungry and cold'
 # to_test = np.array([msg1, msg2])

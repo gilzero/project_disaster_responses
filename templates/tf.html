@@ -27,9 +27,7 @@
                         <div class="form-wrapper">
 
                             {% if category != 'all' %}
-                                    <p class="lead">
-                                        Term Frequency / Word Count for {{ category.replace('_', ' ').title() }}
-                                    </p>
+                                <p class="lead"><i class="ni ni-tag"></i> {{ category.replace('_', ' ').title() }}</p>
                             {% endif %}
 
                             <form method="POST" action="{{ url_for('tf') }}">

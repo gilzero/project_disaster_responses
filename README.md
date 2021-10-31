@@ -1,6 +1,6 @@
 # project\_disaster\_responses
 
-### Environments
+### Environments and Libraries
 - Python 3.9
 - Pandas
 - Flask, Flask-WTF
@@ -8,18 +8,21 @@
 - Scikit-Learn
 - SQLAlchemy
 - NLTK
+- Bootstrap 5
+
+### What is this app about?
+The app allow user to use a machine learning model by inputting a disaster responses type of message, and get output of possible categories estimated by the model. 
+The app also provide some interactive visualization about the dataset and model. 
 
 ### Application Architect
-Flask + Bootstrap + SQLite + Machine Learning Model
+Flask + Bootstrap + SQLite + Plotly + Machine Learning Model
 
 The app use Python, Flask Framework as backend. 
 A customized Bootstrap 5 theme as frontend UI. 
 Data layer uses SQLite and CSV. 
 A machine learning model (classification, multiple output class) is trained by Scikit-learn. (With NLTK processing inside)
 
-### What is this app about?
-The app allow user to use a machine learning model by inputting a disaster responses type of message, and get output of possible categories estimated by the model. 
-The app also provide some interactive visualization about the dataset and model. 
+
 
 
 
@@ -61,8 +64,6 @@ python train_classifier.py static/db/DisasterRes.db
 ```
 
 
-
-
 ### About the trained model
 The model dumped is used with hyper-parameters tuning of, 
 ```python
@@ -71,11 +72,11 @@ The model dumped is used with hyper-parameters tuning of,
 'clf__estimator__n_neighbors': [4, 5, 6]
 ```
 
-results of an overall accuracy score 0.939.
+Results of an overall accuracy score 0.939.
 The encoded (serialized) file size \> 100mb, cannot git to github. 
 To reproduce this model. Need to run the training locally. 
 It depends on the machine’s speed. It took my laptop almost an hour to train this. 
-My version can be downloaded here: https://www.dropbox.com/s/o2iap7gud8yjywd/released_model.pkl?dl=0
+My version can be downloaded here: https://www.dropbox.com/s/o2iap7gud8yjywd/released\_model.pkl?dl=0
 
 
 

@@ -25,12 +25,11 @@
 
                             <div class="form-wrapper">
 
-                                    {% if message != '' %}
-                                        <blockquote>
-                                            <p class="lead">{{ message }}</p>
-                                        </blockquote>
-                                    {% endif %}
-
+                                {% if message != '' %}
+                                    <blockquote>
+                                        <p class="lead"><i class="ni ni-notification-70"></i> {{ message }}</p>
+                                    </blockquote>
+                                {% endif %}
 
 
                                 <form method="POST" action="{{ url_for('model') }}">
