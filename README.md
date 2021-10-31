@@ -118,7 +118,7 @@ Traceback (most recent call last):
     raise ValueError(
 ValueError: empty vocabulary; perhaps the documents only contain stop words
 ```
-
+Updated: this bug fixed. Update with a error handling. 
 
 
 

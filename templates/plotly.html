@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
-{% block page_title %}Plotly - Word Bank Data{% endblock %}
-{% block title %}Word Bank Data{% endblock %}
+{% block page_title %}Plotly | Disaster Responses{% endblock %}
+{% block title %}Disaster Responses{% endblock %}
 {% block bread_title %}Plotly{% endblock %}
 
 {% block main_content %}
@@ -10,7 +10,7 @@
             <div class="col-md-6">
                 <h5 class="mb-0">Plotly</h5>
                 <p class="text-sm mb-0">
-                    Use of plotly js
+                    Use of Plotly js / python framework
                 </p>
             </div>
         </div>
@@ -48,23 +48,6 @@
         </div>
 
 
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <div class="card z-index-2">
-                    <div class="card-header p-3 pb-0">
-                        <h6>Term Frequency per Category (Word Count)</h6>
-                    </div>
-                    <div class="card-body p-3">
-
-                        <div id="demo3"></div>
-                        <div id="tf-plot"></div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
     </div>
 {% endblock %}
 
@@ -74,7 +57,7 @@
 
 
     <script>
-        document.getElementById("demo1").innerHTML = "Hello JavaScript!";
+        {#document.getElementById("demo1").innerHTML = "Hello JavaScript!";#}
 
         // plot genre
         const genreJSON = {{ genre_fig_json | safe }};
@@ -84,16 +67,20 @@
         const catJSON = {{ cat_fig_json | safe }};
         Plotly.newPlot("category-plot", catJSON)
 
-
-        // plot term frequency / word counts per category
-
-
         // responsive layout
         window.onresize = function () {
-            Plotly.relayout('genre-plot', {
-                'xaxis.autorange': true,
-                'yaxis.autorange': true
-            });
+            Plotly.relayout(
+                'genre-plot', {
+                    'xaxis.autorange': true,
+                    'yaxis.autorange': true
+                }
+            ),
+            Plotly.relayout(
+                'category-plot', {
+                    'xaxis.autorange': true,
+                    'yaxis.autorange': true
+                }
+            );
         };
 
     </script>

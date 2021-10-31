@@ -613,8 +613,11 @@
 <script src="/static/assets/js/plugins/perfect-scrollbar.min.js"></script>
 <script src="/static/assets/js/plugins/smooth-scrollbar.min.js"></script>
 
-<script src="/static/assets/js/plugins/threejs.js"></script>
-<script src="/static/assets/js/plugins/orbit-controls.js"></script>
+
+
+
+
+{% block custom_js %}{% endblock %}
 
 <script>
     var win = navigator.platform.indexOf('Win') > -1;
@@ -625,7 +628,7 @@
       Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
     }
 </script>
-{% block custom_js %}{% endblock %}
+
 <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
 <script src="/static/assets/js/soft-ui-dashboard.min.js?v=1.0.4"></script>
 

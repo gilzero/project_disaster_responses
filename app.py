@@ -56,7 +56,30 @@ class TfForm(FlaskForm):
 @app.route('/')
 @app.route('/index')
 def index():
-    return render_template('index.html')
+
+    # general stats (top 10 categories info)
+    names = list(df.iloc[:, -36:].sum().sort_values(ascending=False).head(10).index)
+    top_cats_stats = []
+    for n in names:
+        title = n.replace('_', ' ').title()
+        percent = f"{round(df[df[n] == 1].shape[0] / df.shape[0] * 100, 2)}%"
+        mean_length = round(df[df[n] == 1]['message'].apply(lambda x: len(x)).describe()['mean'], 2)
+        top_cats_stats.append((n, title, percent, mean_length))
+
+
+    # Get 100 random sample messages from Dataset
+    sample_msgs = list(df['message'].sample(n=100).values)
+
+    # total record value
+    total = df.shape[0]
+
+    # average text length
+    mean_length = round(df['message'].apply(lambda x: len(x)).describe()['mean'], 2)
+
+    return render_template('index.html',
+                           sample_len=len(sample_msgs), sample_msgs=sample_msgs,
+                           total=total, mean_length=mean_length,
+                           top_cats_stats=top_cats_stats, top_cats_stats_len=len(top_cats_stats))
 
 
 @app.route('/plotly')
@@ -99,8 +122,8 @@ def plotly():
     }]
 
     cat_layout = {
-        'title': '',
-        'xaxis': {'title': 'Categories'},
+        'title': 'Distribution of Message Categories',
+        'xaxis': {'title': ''},
         'yaxis': {'title': 'Numbers'},
         'autosize': True
     }
@@ -216,7 +239,7 @@ def _get_category_top_words(df, category='all', size=30):
     names = df.iloc[:, -36:].columns.to_list()
 
     if category not in names:
-        print(f'Category {category} Not Found. Using All Messages.')
+        print(f'User does not specify a category. Using All Messages by default.')
         category = 'all'
         messages = df['message']
     else:
@@ -226,28 +249,40 @@ def _get_category_top_words(df, category='all', size=30):
     # assemble a corpus
     corpus = list(messages.values)
 
-    # initialize count vectorized object
+    # initialize a CountVectorizer object
     cv = CountVectorizer(tokenizer=tokenize)
 
-    # fit the transformer to get each token (word)
-    cv_fit = cv.fit_transform(corpus)
+    # exception handle
+    try:
+        # fit the transformer to get each token (word)
+        cv_fit = cv.fit_transform(corpus)
 
-    # all words (feature names)
-    word_list = cv.get_feature_names_out()
+        # all words (feature names)
+        word_list = cv.get_feature_names_out()
 
-    # count of each word (feature names) in array shape
-    count_list = np.asarray(cv_fit.sum(axis=0))[0]
+        # count of each word (feature names) in array shape
+        count_list = np.asarray(cv_fit.sum(axis=0))[0]
 
-    # (word count dictionary) Concat feature names and count value together.
-    wc_dict = dict(zip(word_list, count_list))
+        # (word count dictionary) Concat feature names and count value together.
+        wc_dict = dict(zip(word_list, count_list))
 
-    # assemble to a DataFrame for computation.
-    wc_df = pd.DataFrame.from_dict(wc_dict, orient='index', columns=['number'])
+        # assemble to a DataFrame for computation.
+        wc_df = pd.DataFrame.from_dict(wc_dict, orient='index', columns=['number'])
 
-    return wc_df.sort_values(by=['number'], ascending=[False]).head(size)['number'].to_dict()
+        # convert to dictionary
+        res = wc_df.sort_values(by=['number'], ascending=[False]).head(size)['number'].to_dict()
+    except ValueError as e:
+        # catching fit_transform. If the vocabulary is empty, then assemble a dummy 'NoRecord' word
+        print(f"Exception: [ValueError]: \n{e}")
+        res = {'NoRecord': 0}
+
+    return res
 
 
 if __name__ == '__main__':
-    # use terminal python app.py to run. (do not use 'flask run' in this case, otherwise pickle wont load properly.)
+    # use terminal 'python app.py' to run. (do not use 'flask run' in this case, otherwise pickle wont load properly.)
+    # pickle dump has to remember the context where it dumped, it was under __main__. So to reload back, it has to
+    # be under __main__ also. However 'flask run' will ignore code in '__main__'. Therefore, in order to properly load
+    # pickle file (the model file), should use 'python app.py' method.
     # details about 'app.run() vs flask run'.  https://www.twilio.com/blog/how-run-flask-application
     app.run()
