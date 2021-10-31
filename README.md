@@ -10,6 +10,24 @@
 - NLTK
 - Bootstrap 5
 
+
+## Install Dependencies
+```bash
+cd PATH_OF_PROJECT_ROOT
+virtualenv venv
+source venv/bin/activate
+
+pip install flask
+pip install flask_wtf
+pip install numpy
+pip install pandas
+pip install sqlalchemy
+pip install nltk
+pip install scikit-learn
+pip install plotly
+
+```
+
 ---
 
 ## What is this app about?
