@@ -286,4 +286,8 @@ if __name__ == '__main__':
     # be under __main__ also. However 'flask run' will ignore code in '__main__'. Therefore, in order to properly load
     # pickle file (the model file), should use 'python app.py' method.
     # details about 'app.run() vs flask run'.  https://www.twilio.com/blog/how-run-flask-application
+    # In case that want to use 'flask run' (or deploy on PaaS that user doesnt has options to run python, e.g heroku),
+    # then need to rewrite the code, can make tokenize as a standlone module, with train_classifier import the
+    # custom tokenize module, so when dumping out, it 'remembers' the context for external. When load back, also import
+    # that custom tokenize, so that dump out and load back from same context.
     app.run()
