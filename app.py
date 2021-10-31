@@ -41,8 +41,7 @@ class MessageForm(FlaskForm):
     submit = SubmitField('Submit')
 
 
-class TfForm(FlaskForm):
-    message = StringField('Message')
+class CategoryForm(FlaskForm):
     category = SelectField(
         'Select a Category to See Results:',
         choices=options
@@ -192,7 +191,7 @@ def tf():
     print(f"length of category: {len(category)}")
 
     # allow user to input a category
-    form = TfForm()
+    form = CategoryForm()
 
     # compute word count
     wc_dict = _get_category_top_words(df, category)
@@ -222,6 +221,10 @@ def tf():
     tf_fig_json = json.dumps(tf_data, cls=PlotlyJSONEncoder)
 
     return render_template('tf.html', tf_fig_json=tf_fig_json, form=form, template='form-template', category=category)
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
 
 
 # Private functions
