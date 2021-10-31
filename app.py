@@ -39,11 +39,17 @@ options = [('all', 'All (Default)')] + list(
 
 # Define Forms
 class MessageForm(FlaskForm):
+    '''
+    Extend a custom FlaskForm
+    '''
     message = StringField('Message')
     submit = SubmitField('Submit')
 
 
 class CategoryForm(FlaskForm):
+    '''
+    Extend a custom FlaskForm
+    '''
     category = SelectField(
         'Select a Category to See Results:',
         choices=options
@@ -56,6 +62,11 @@ class CategoryForm(FlaskForm):
 @app.route('/')
 @app.route('/index')
 def index():
+    '''
+    Router handling for index page.
+
+    :return: a rendered jinja.
+    '''
     # General stats (top 10 categories info)
     names = list(df.iloc[:, -36:].sum().sort_values(ascending=False).head(10).index)
     top_cats_stats = []
@@ -82,6 +93,11 @@ def index():
 
 @app.route('/plotly')
 def plotly():
+    '''
+    Router handling for /plotly plotly visualization page.
+
+    :return: a rendered jinja.
+    '''
     # Two Plots Genre bar chart, category bar chart
 
     # ===== Genre Chart Handling ===== #
@@ -137,6 +153,13 @@ def plotly():
 
 @app.route('/model', methods=["GET", "POST"])
 def model():
+    '''
+    Router handling for /model  model page.
+
+    :return: a rendered jinja.
+    '''
+
+    # Two Plots Genre bar chart, category bar chart
     print(f"[df.shape]: {df.shape}")
 
     # Get the message parameter value from POST. If message parameter is not POSTed, make it an empty string.
@@ -177,6 +200,11 @@ def model():
 
 @app.route('/tf', methods=["GET", "POST"])
 def tf():
+    '''
+    Router handling for /tf Term Frequency page.
+
+    :return: a rendered jinja.
+    '''
     print('Viewing /tf page')
 
     # Get the category parameter value from POST. If category parameter is not POSTed, make it to default all.
@@ -227,11 +255,14 @@ def about():
 
 # Private functions
 def _get_category_top_words(df, category='all', size=30):
-    # df: original df
-    # category: column name: e.g 'weather_related', 'food'
-    # size: top how many? e.g 20 = top 20 (most common 20 words)
-    #
-    # return a top word count dictionary
+    '''
+    Get top word counts by given category.
+
+    :param df: original dataframe
+    :param category: column name: e.g 'weather_related', 'food'
+    :param size: top how many? e.g 20 = top 20 (most common 20 words)
+    :return: a word count dictionary
+    '''
 
     print(f'Analyzing Most Common Terms Found in "{category}" ...')
 

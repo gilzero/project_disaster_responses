@@ -33,6 +33,12 @@ lemmatizer = WordNetLemmatizer()
 
 
 def load_data(data_file):
+    '''
+    Load the cleaned dataset from SQLite db file.
+
+    :param data_file: SQLite db file.
+    :return: a tuple of messages text array, categories array and list of column names
+    '''
     # load data from database
     engine = create_engine(f"sqlite:///{data_file}")
     df = pd.read_sql("select * from DisasterResponse", con=engine)
@@ -55,6 +61,11 @@ def load_data(data_file):
 
 
 def build_model():
+    '''
+    Build a machine learning model with feature union pipelines and GridSearch tuning.
+
+    :return: a model pipeline object
+    '''
     pipeline = Pipeline([
         ('features', FeatureUnion([
 
@@ -69,12 +80,11 @@ def build_model():
         ('clf', MultiOutputClassifier(KNeighborsClassifier()))
     ])
 
-    # tuning hyper-parameters for GridSearchCV
-
-    # check possible hyper-parameters
+    # Check possible hyper-parameters if necessary
     # for i in list(pipeline_new.get_params().keys()):
     #     print(i)
 
+    # Tuning hyper-parameters for GridSearchCV
     parameters = {
         'features__text_pipeline__vect__ngram_range': ((1, 1), (1, 2)),
         # 'features__text_pipeline__vect__max_df': (0.5, 0.75, 1.0),
@@ -83,28 +93,38 @@ def build_model():
         'clf__estimator__n_neighbors': [4, 5, 6]
     }
 
-    # create gridsearch object and return as final model pipeline
+    # Create GridSearch object and return as final model pipeline
     model_pipeline = GridSearchCV(pipeline, param_grid=parameters)
 
     return model_pipeline
 
 
 def train(X, y, cat_columns, model):
-    # train test split
+    '''
+    Do the training of the model.
+
+    :param X: Independent variables. The messages array.
+    :param y: Dependent variable. The categories array.
+    :param cat_columns: A list of category names.
+    :param model: The model object.
+    :return: A trained model.
+    '''
+
+    # Train-Test split
     X_train, X_test, y_train, y_test = train_test_split(X, y)
 
-    # fit model
+    # Fit the model
     start = timer()
     model.fit(X_train, y_train)
     end = timer()
     print(f"⌛ Time Processed Training: {round((end - start), 2)} seconds")
 
-    # output model test results
+    # Output model test results
     y_pred = model.predict(X_test)
     accuracy = (y_pred == y_test).mean()
     print(f"💡 Model Accuracy: {accuracy}")
 
-    # output classification_report related values
+    # Output classification_report related values
     for i in range(len(cat_columns)):
         precision, recall, fscore, support = score(y_test[:, i], y_pred[:, i], average='micro')
         print(
@@ -114,7 +134,14 @@ def train(X, y, cat_columns, model):
 
 
 def export_model(model):
-    # Export model as a pickle file
+    '''
+    Export model as a pickle file. Encode (Serialize) the model object from memory into persistent storage.
+    Hardcoded to this file path: static/machine_learning_models/released_model.pkl
+
+    :param model: The trained model.
+    :return:
+    '''
+
 
     print("📦 Exporting Model...")
     pickle.dump(model, open('static/machine_learning_models/released_model.pkl', 'wb'))
@@ -122,6 +149,13 @@ def export_model(model):
 
 
 def run_pipeline(data_file):
+    '''
+    The script's main execution logic flow.
+
+    :param data_file: The cleaned SQLite db file.
+    :return:
+    '''
+
     X, y, cat_columns = load_data(data_file)  # run ETL pipeline
     model = build_model()  # build model pipeline
     model = train(X, y, cat_columns, model)  # train model pipeline
@@ -131,6 +165,20 @@ def run_pipeline(data_file):
 # Private Functions
 
 def tokenize(text):
+    '''
+    private tokenizer to transform each text.
+    As a NLP helper function including following tasks:
+    - Replace URLs
+    - Normalize text
+    - Remove punctuation
+    - Tokenize words
+    - Remove stop words
+    - Legmmatize words
+
+    :param text: A message text.
+    :return: cleaned tokens extracted from original message text.
+    '''
+
     # print(f"original text: \n {text}")
 
     # replace urls
@@ -157,8 +205,18 @@ def tokenize(text):
 
 # Custom Transformer
 class StartingVerbExtractor(BaseEstimator, TransformerMixin):
+    '''
+    A custom transform for feature union.
+    Check whether a message's starting word is a verb.
+    '''
 
     def starting_verb(self, text):
+        '''
+        Internal helper function. Check if starting word is verb
+
+        :param text: A message text.
+        :return: 1 or 0 represents true or false.
+        '''
         sentence_list = nltk.sent_tokenize(text)
         for sentence in sentence_list:
             pos_tags = nltk.pos_tag(tokenize(sentence))
@@ -171,6 +229,11 @@ class StartingVerbExtractor(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
+        '''
+        Apply the lambda to the message column.
+        :param X: Each datapoint
+        :return: A dataframe represents if starting is verb
+        '''
         X_tagged = pd.Series(X).apply(self.starting_verb)
         return pd.DataFrame(X_tagged)
 
@@ -179,17 +242,3 @@ if __name__ == '__main__':
     data_file = sys.argv[1]  # get filename of dataset
     run_pipeline(data_file)  # run data pipeline
 
-# ========= Model hyper parameters tuning experiments ===========
-
-
-# Model Accuracy:0.9360102397178992 with hyper
-# 'clf__estimator__n_neighbors': [4, 5, 6]
-
-
-# Model Accuracy: 0.9390279049265927 with hyper
-# 'features__text_pipeline__vect__ngram_range': ((1, 1), (1, 2)),
-# 'features__text_pipeline__tfidf__use_idf': (True, False),
-# 'clf__estimator__n_neighbors': [4, 5, 6]
-#  also filter with stop words
-
-# ===============================================================

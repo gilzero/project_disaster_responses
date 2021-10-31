@@ -1,12 +1,6 @@
 """
-Rename to process_data.py if necessary.
+Data ETL pipelines script.
 
-
-To read back from db
-
-from sqlalchemy import create_engine
-engine = create_engine('sqlite:///DisasterRes.db')
-pd.read_sql("select * from DisasterResponse", con=engine)
 """
 
 import sys
@@ -16,6 +10,14 @@ from sqlalchemy import create_engine
 
 
 def load_data(messages_filepath, categories_filepath):
+    '''
+    Load from two csv files, and return a dataframe.
+
+    :param messages_filepath: messages csv file.
+    :param categories_filepath: categories csv file.
+    :return: a merged dataset
+    '''
+
     # load messages dataset
     messages = pd.read_csv(messages_filepath)
     # messages.head()
@@ -32,6 +34,13 @@ def load_data(messages_filepath, categories_filepath):
 
 
 def clean_data(df):
+    '''
+    Clean / transform the dataset.
+
+    :param df: a merged dataset.
+    :return: a cleaned dataset.
+    '''
+
     # create a dataframe of the 36 individual category columns
     categories = df['categories'].str.split(';', expand=True)
     # categories.head()
@@ -75,12 +84,25 @@ def clean_data(df):
 
 
 def save_data(df, database_filename):
+    '''
+    Save the cleaned dataset to sqlite db.
+
+    :param df: The cleaned dataset.
+    :param database_filename: File path of sqlite db.
+    :return:
+    '''
     # engine = create_engine('sqlite:///InsertDatabaseName.db')
     engine = create_engine(f"sqlite:///{database_filename}")
     df.to_sql('DisasterResponse', engine, index=False, if_exists='replace')
 
 
 def main():
+    '''
+    Main execution logic.
+    It takes terminal arguments of messages csv file, categories csv file, output sqlite db filepath.
+
+    :return:
+    '''
     if len(sys.argv) == 4:
 
         messages_filepath, categories_filepath, database_filepath = sys.argv[1:]

@@ -1,23 +1,23 @@
-"""
-Example of minial script to reuse the released model and do classification of a message instance.
-"""
+'''
+Example snippet to reuse the released model and do classification of a message instance.
+'''
 
-# import neccessary packages
+# import necessary packages
 import pickle
 import numpy as np
 from train_classifier import tokenize
 from train_classifier import StartingVerbExtractor
 
-# load from model pickle file
+# Load from model pickle file
 model = pickle.load(open('static/machine_learning_models/released_model.pkl', 'rb'))
 
-# make test independent variable for classification/prediction
+# Make test independent variable for classification/prediction
 message = 'I need to eat something. Do you have burger? So Hungry.'
 
-# match the np array shape
+# Match the np array shape
 test_1 = np.array([message])
 
-# classify / predict
+# Classify / Predict
 result = model.predict(test_1)
 
 print(result)
