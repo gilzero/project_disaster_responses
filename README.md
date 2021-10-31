@@ -67,6 +67,8 @@ python app.py
 
 to run ETL, under project root directory.
 ```bash
+cd PATH_OF_PROJECT_ROOT
+source vene/bin/active
 python process_data.py static/csv/messages.csv static/csv/categories.csv static/db/DisasterRes.db
 ```
 
@@ -76,6 +78,8 @@ python process_data.py static/csv/messages.csv static/csv/categories.csv static/
 ## Train Machine Learning Model
 Under project root directory.
 ```bash
+cd PATH_OF_PROJECT_ROOT
+source vene/bin/active
 python train_classifier.py static/db/DisasterRes.db
 ```
 
