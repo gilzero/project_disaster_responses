@@ -37,7 +37,7 @@ Use Scikit-learn to train a machine learning model (classification, multiple out
 
 ```bash
 cd PATH_OF_PROJECT_ROOT
-source vene/bin/active
+source venv/bin/activate
 python app.py
 ```
 
@@ -68,7 +68,7 @@ python app.py
 to run ETL, under project root directory.
 ```bash
 cd PATH_OF_PROJECT_ROOT
-source vene/bin/active
+source venv/bin/activate
 python process_data.py static/csv/messages.csv static/csv/categories.csv static/db/DisasterRes.db
 ```
 
@@ -79,7 +79,7 @@ python process_data.py static/csv/messages.csv static/csv/categories.csv static/
 Under project root directory.
 ```bash
 cd PATH_OF_PROJECT_ROOT
-source vene/bin/active
+source venv/bin/activate
 python train_classifier.py static/db/DisasterRes.db
 ```
 
