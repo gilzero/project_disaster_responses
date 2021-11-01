@@ -153,3 +153,23 @@ For a more ‘pro’ version, consider plotting {word, count of the word, TFIDF 
 ![alt screenshot](static/screenshots/screenshot_plotly.png)
 
 ![alt screenshot](static/screenshots/screenshot_about.png)
+
+---
+
+### Known Issues
+
+If making a page to take arguments in URL, got some kinds of url_for FLask endpoint type error.
+
+```
+e.g /datatable/<name>
+```
+
+Not yet debugged for such cases. 
+
+
+### Future Recommendation
+
+Ideally, I would put model loading and using as external service. For example, put model in a FastAPI deployment. 
+Due to time constrain, demonstration of functionalities and feasibility of this project, model load and model use are all calling inside the Flask app. It made the app less scalable. 
+A better way to decouple the app for production environment. Flask to serve as a sole web app framework to handle router, ui, user interaction etc, and call API to use of any machine learning models encapsulated externally.
+For machine learnings models that trained and served in a FastAPI project, re-training, tuning, model api versioning etc can all be done over there.
