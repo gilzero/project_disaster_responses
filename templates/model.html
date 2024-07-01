@@ -5,88 +5,73 @@
 {% block bread_title %}Multiple Output Classification Model{% endblock %}
 
 {% block main_content %}
-    <div class="container-fluid py-4">
-        <div class="row">
-            <div class="col-md-6">
-                <h5 class="mb-0">Disaster Respond Classification</h5>
-                <p class="text-sm mb-0">
-
-                </p>
-            </div>
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-md-6">
+            <h5 class="mb-0">Disaster Response Classification</h5>
+            <p class="text-sm mb-0">
+                Enter a message to classify it into disaster response categories.
+            </p>
         </div>
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <div class="card z-index-2">
-                    <div class="card-header p-3 pb-0">
-                        <h6>Machine Learning Model MultiOutputClassifier</h6>
-                    </div>
-                    <div class="card-body p-3">
-                        <div>
-
-                            <div class="form-wrapper">
-
-                                {% if message != '' %}
-                                    <blockquote>
-                                        <p class="lead"><i class="ni ni-notification-70"></i> {{ message }}</p>
-                                    </blockquote>
-                                {% endif %}
-
-
-                                <form method="POST" action="{{ url_for('model') }}">
-
-                                    <fieldset class="form-field">
-                                        {{ form.message.label(class="form-label") }}
-                                        {{ form.message(class="form-control form-control-lg", placeholder="Please enter a message here") }}
-                                    </fieldset>
-
-                                    {{ form.submit(class="btn btn-primary mb-3 mt-3") }}
-                                </form>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <div class="card z-index-2">
-                    <div class="card-header p-3 pb-0">
-                        <h6>Categories</h6>
-                    </div>
-                    <div class="card-body p-3">
-
-                        {% block content %}
-                            <ul class="list-group">
-                                {% for k, v in cats.items() %}
-                                    {% if v == 1 %}
-                                        <li class="list-group-item text-center active">{{ k }}</li>
-                                    {% else %}
-                                        <li class="list-group-item text-center list-group-item-light">{{ k }}</li>
-                                    {% endif %}
-                                {% endfor %}
-                            </ul>
-                        {% endblock %}
-
-                    </div>
-
-
-                </div>
-            </div>
-
-        </div>
-
-
     </div>
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card z-index-2">
+                <div class="card-header p-3 pb-0">
+                    <h6>Machine Learning Model MultiOutputClassifier</h6>
+                </div>
+                <div class="card-body p-3">
+                    <div class="form-wrapper">
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                        {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                        {% endif %}
+                        {% endwith %}
+
+                        {% if message %}
+                        <blockquote>
+                            <p class="lead"><i class="ni ni-notification-70"></i> {{ message }}</p>
+                        </blockquote>
+                        {% endif %}
+
+                        <form method="POST" action="{{ url_for('model_page') }}">
+                            {{ form.hidden_tag() }}
+                            <fieldset class="form-field">
+                                {{ form.message.label(class="form-label") }}
+                                {{ form.message(class="form-control form-control-lg", placeholder="Please enter a message here") }}
+                            </fieldset>
+                            {{ form.submit(class="btn btn-primary mb-3 mt-3") }}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card z-index-2">
+                <div class="card-header p-3 pb-0">
+                    <h6>Categories</h6>
+                </div>
+                <div class="card-body p-3">
+                    <ul class="list-group">
+                        {% for k, v in cats.items() %}
+                        <li class="list-group-item text-center {% if v == 1 %}active{% else %}list-group-item-light{% endif %}">
+                            {{ k }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
-
 {% block custom_js %}
-
-    <script>
-        document.getElementById("demo2").innerHTML = hello;
-
-    </script>
-
+<script>
+    // You can add any custom JavaScript here if needed
+</script>
 {% endblock %}
